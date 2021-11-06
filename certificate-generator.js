@@ -1,32 +1,27 @@
 const pdfdoc = require('pdfkit')
 const fs = require('fs')
 
-const doc = new pdfdoc({
-    layout: "landscape",
-    size: "A4"
-})
+module.exports = (name) => {
 
-const generate = (name) => {
-    
+    //creating a new empty pdf document
+    const doc = new pdfdoc({
+        layout: "landscape",
+        size: "A4"
+    })
+
+    //creating a write stream to save the pdf with user's name
     doc.pipe(fs.createWriteStream(`${name}.pdf`))
     
-    doc.image(
-        'assets/both-tracks.png',
-        doc.page.width / 2 - maxWidth / 2,
-        60, 
-        {
-          fit: [maxWidth, maxHeight],
-          align: 'center',
-         }
-      );
-    // doc.font("fonts/DancingScript-VariableFont_wght.ttf");
+    //importing the image in pdf
+    doc.image('assets/both-tracks.png', 0, 0, { width: 842 })
 
-    // Draw the name
-    doc.fontSize(60).text(name, 20, 265, {
-        align: "center"
+    // writing the name on PDF file 
+    doc.font("fonts/Caveat-VariableFont_wght.ttf").fontSize(55).text(name, 50, 250, {
+        align: "left"
     });
 
+    //closing the connection with pdf
     doc.end()
 }
 
-generate("Shubham")
+

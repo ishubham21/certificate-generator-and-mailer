@@ -1,24 +1,19 @@
 const csv = require('csv-parser')
 const fs = require('fs')
 const results = [];
+const generateCertificate = require('./certificate-generator')
+const mailCertificate = require('./certificate-mailer')
 
 fs.createReadStream('data/participantData.csv')
     .pipe(csv())
     .on('data', (data) => results.push(data))
     .on('end', () => {    //to create synchronicity - i.e. after the data is recieved
 
-        //calculating the number of labs and appending it in the results
+        //generating a certificate for each user and then mailing it 
         results.forEach((result) => {
-            console.log(result['Email Address'])
+            generateCertificate(result['Name'])
+            mailCertificate(result["Name"], result["Email Address"])
+            result.sent = "Sent"
         })
-
-        //creating a file called participantData
-        fs.writeFileSync(
-            "data/participantData.json",
-            JSON.stringify(results),
-            (err) => {
-                if (err) throw err;
-                console.log("Data saved!");
-            }
-        );
+        
     });
